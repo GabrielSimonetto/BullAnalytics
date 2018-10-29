@@ -1,0 +1,33 @@
+.root{
+	/*-fx-background-color: white;*/
+	-fx-background-color: #1f201f;
+	-fx-fill: FIREBRICK;
+}
+
+.text{
+}
+
+/* Grids Styles  */
+.grid{
+	-fx-border-width: 3;
+	-fx-border-color: #404040;
+	-fx-text-inner-color: #f4f4f4;
+	-fx-fill: FIREBRICK;
+}
+
+.assetsGrid{
+	-fx-border-style: solid none solid solid;
+}
+
+.graphicGrid{
+	-fx-border-style: solid solid none solid;
+}
+
+.analyticGrid{
+	-fx-border-style: solid solid none solid;
+}
+
+.tradeGrid{
+	-fx-border-style: solid solid solid solid;
+}
+

@@ -1,0 +1,7 @@
+.stage{
+	/*-fx-background-color:transparent;*/
+	-fx-opacity:0;
+}
+.scene{
+	-fx-opacity:0;
+}
