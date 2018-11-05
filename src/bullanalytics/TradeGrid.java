@@ -28,7 +28,15 @@ public class TradeGrid extends GridPane{
 	private final String url = Main.class.getResource("/").toString();
 
 	public TradeGrid() {
-		Text t1 = new Text("Trade Grid");
-		this.add(t1,0,0);
+		Button t = new Button();
+		t.setText("Say 'Hello World'");
+	        t.setOnAction(new EventHandler<ActionEvent>() {
+
+        	    @Override
+           	 public void handle(ActionEvent event) {
+               		 System.out.println("Hello World!");
+           	}
+        	});
+		this.add(t,0,0);
 	}
 }

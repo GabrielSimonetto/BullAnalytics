@@ -1,12 +1,10 @@
 .root{
 	/*-fx-background-color: white;*/
 	-fx-background-color: #1f201f;
-	-fx-fill: FIREBRICK;
 }
-
-.text{
+.button{
+	-fx-text-fill: FIREBRICK;
 }
-
 /* Grids Styles  */
 .grid{
 	-fx-border-width: 3;
