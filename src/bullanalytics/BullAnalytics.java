@@ -62,6 +62,7 @@ public class BullAnalytics extends Application {
 	public BullAnalytics() {
 		// Constructor is called after BEFORE_LOAD.
 		//System.out.println(BullAnalytics.STEP() + "BullAnalytics constructor called, thread: " + Thread.currentThread().getName());
+
 	}
 	
 	@Override

@@ -3,8 +3,17 @@
 	-fx-background-color: #1f201f;
 }
 .button{
-	-fx-text-fill: FIREBRICK;
+	-fx-text-fill: #EEEEEE;
+	-fx-background-color: #F3544C; 
+	/*-fx-background-opacity: 0 ; 
+	/*#51D663;*/
+	/*good red #F0544C*/
 }
+
+.list-cell{
+	-fx-background-color: #1f201f;
+}
+
 /* Grids Styles  */
 .grid{
 	-fx-border-width: 3;

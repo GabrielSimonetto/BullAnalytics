@@ -1,9 +1,9 @@
 package bullanalytics;
 
 //Scene
-import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 //import javafx.scene.text.TextAlignment;
+import javafx.scene.control.Label;
 //import javafx.scene.control.TextField;
 //import javafx.scene.control.PasswordField;
 import javafx.scene.layout.GridPane;
@@ -22,9 +22,6 @@ import javafx.geometry.Insets;
 import java.net.URL;
 
 public class AnalyticGrid extends GridPane{
-
 	public AnalyticGrid() {
-		Text t1 = new Text("Analytic Grid");
-		this.add(t1,0,0);
 	}
 }
