@@ -28,6 +28,8 @@ import javafx.scene.layout.RowConstraints;
 //Events
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 //Others
 import javafx.geometry.Pos;
@@ -41,15 +43,15 @@ public class AssetsGrid extends GridPane{
 	static class XCell extends ListCell<String>{
 		private HBox hbox = new HBox();
 		private Pane pane = new Pane();
-		private Button labelBtn = new Button("");
+		private Label label = new Label("");
 		private Button favBtn = new Button("?");
 
 		public XCell(){
 			super();
-			hbox.getChildren().addAll(labelBtn, pane, favBtn);
+			hbox.getChildren().addAll(label, pane, favBtn);
 			HBox.setHgrow(pane, Priority.ALWAYS);
-			favBtn.setOnAction(event -> favBtnClicked(getItem()));
-			labelBtn.setOnAction(event -> System.out.println(getItem()));
+			//favBtn.setOnAction(event -> favBtnClicked(getItem()));
+			//labelBtn.setOnAction(event -> System.out.println(getItem()));
 		}
 		
 		@Override
@@ -58,8 +60,8 @@ public class AssetsGrid extends GridPane{
 			setText(null);
 			setGraphic(null);
 			if(item != null && !empty){
-				labelBtn.setText(item);
-				setGraphic(hbox);
+				setText(item);
+				/*setGraphic(hbox);*/
 			}
 		}
 
@@ -84,6 +86,16 @@ public class AssetsGrid extends GridPane{
 		Collections.sort(this.assets);
 		ListView<String> listv = new ListView<String>(this.assets);
 		listv.setCellFactory(param -> new XCell());
+
+		listv.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+    			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        			System.out.println("ListView selection changed from oldValue = "
+               				 + oldValue + " to newValue = " + newValue);
+    			}
+		});
+
+		listv.getStyleClass().addAll("assets-list");
 		ColumnConstraints colum1 = new ColumnConstraints();
 		RowConstraints row1 = new RowConstraints();
 		colum1.setPercentWidth(100);

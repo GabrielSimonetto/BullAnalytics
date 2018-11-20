@@ -1,6 +1,7 @@
 .root{
 	/*-fx-background-color: white;*/
 	-fx-background-color: #1f201f;
+	-fx-focus-color: #1F201F;
 }
 .button{
 	-fx-text-fill: #EEEEEE;
@@ -10,16 +11,46 @@
 	/*good red #F0544C*/
 }
 
+/* List Views */
 .list-cell{
+	/*-fx-border-width: 1;
+	-fx-border-style: none none solid none;*/
+	/*-fx-border-color: #5E5E5E;*/
+	-fx-text-fill: #EEEEEE;
+	-fx-background-color: #1f201f;
+	-fx-focus-color: #1F201F;
+}
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    	/*-fx-background-color: linear-gradient(#328BDB 0%, #207BCF 25%, #1973C9 75%, #0A65BF 100%);*/
+	-fx-background-color: #C9AD0C;
+   	-fx-text-fill: #1f201f;
+}
+
+.list-cell:even {
 	-fx-background-color: #1f201f;
 }
 
+.list-cell:filled:hover {
+    	-fx-background-color: #D0BD60;
+    	-fx-text-fill: #1f201f;
+}
+
+/*Scroll Bar*/
+.assets-list .scroll-bar{
+	-fx-background-color:#1f201f;
+}
+
+.assets-list .scroll-bar:vertical .thumb {
+	-fx-background-color: #333333;
+	-fx-background-insets: 1, 0, 0;
+	-fx-background-radius: 2em;
+}
 /* Grids Styles  */
 .grid{
-	-fx-border-width: 3;
+	-fx-border-width: 0;
 	-fx-border-color: #404040;
 	-fx-text-inner-color: #f4f4f4;
-	-fx-fill: FIREBRICK;
+	/*-fx-fill: FIREBRICK;*/
 }
 
 .assetsGrid{
