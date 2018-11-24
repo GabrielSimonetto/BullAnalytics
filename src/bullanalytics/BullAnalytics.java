@@ -25,6 +25,11 @@ import javafx.stage.Stage;
 //import javax.event.ActionEvent;
 //import javax.event.EventHandler;
 
+//Timer
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+
 //Others
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
@@ -41,16 +46,19 @@ public class BullAnalytics extends Application {
 	private Stage bullStage;
 
 	//Grid Panels
-	private GridPane assetsGrid;
-	private GridPane graphicGrid;
+	private GridPane stocksGrid;
+	private GridPane chartGrid;
 	private GridPane analyticGrid;
 	private GridPane tradeGrid;
+
+	//Timer
+	private ExecutorService executor;
 
 	//Aux
 	private final String url = Main.class.getResource("/").toString();
 	
 	// Just a counter to create some delay while showing preloader.
-	private static final int COUNT_LIMIT = 5000;
+	private static final int COUNT_LIMIT = 50000;
 
 	private static int stepCount = 1;
 
@@ -59,12 +67,6 @@ public class BullAnalytics extends Application {
 		return stepCount++ + ". ";
 	}
 
-	public BullAnalytics() {
-		// Constructor is called after BEFORE_LOAD.
-		//System.out.println(BullAnalytics.STEP() + "BullAnalytics constructor called, thread: " + Thread.currentThread().getName());
-
-	}
-	
 	@Override
 	public void init() throws Exception {
 		// Perform some heavy lifting (i.e. database start, check for application updates, etc. )
@@ -74,10 +76,23 @@ public class BullAnalytics extends Application {
 		}
 
 		//Start Grid Panels
-		this.assetsGrid = new AssetsGrid();
-		this.graphicGrid = new GraphicGrid();
+		this.stocksGrid = new StocksGrid();
+		this.chartGrid = new ChartGrid();
 		this.analyticGrid = new AnalyticGrid();
 		this.tradeGrid = new TradeGrid();
+
+
+		//Start TimeLoop for Update
+		this.executor = Executors.newCachedThreadPool(new ThreadFactory() {
+            		@Override
+            		public Thread newThread(Runnable r) {
+                		Thread thread = new Thread(r);
+                		thread.setDaemon(true);
+                		return thread;
+            		}
+        	});
+	
+        	executor.execute(new UpdateData());
 	}
 
 	@Override
@@ -86,10 +101,7 @@ public class BullAnalytics extends Application {
 		//Make Grid
 		GridPane grid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
-		//grid.setHgap(10);
-		//grid.setVgap(10);
 		grid.setPadding(new Insets(25, 25, 25, 25));
-		//grid.setGridLinesVisible(true);
 
 		//Columns
 		ColumnConstraints colum1 = new ColumnConstraints();
@@ -112,18 +124,19 @@ public class BullAnalytics extends Application {
 		grid.getRowConstraints().addAll(row1, row2, row3);
 
 		//Add Secondaris Grids
-		grid.add(this.assetsGrid,0,0);
-		grid.setRowSpan(this.assetsGrid,3);
-		grid.add(this.graphicGrid, 1, 0);
+		grid.add(this.stocksGrid,0,0);
+		grid.setRowSpan(this.stocksGrid,3);
+		grid.add(this.chartGrid, 1, 0);
 		grid.add(this.analyticGrid, 1, 1);
 		grid.add(this.tradeGrid,1,2);
 
         	//Make Scene
         	Scene scene = new Scene(grid, this.WIDTH, this.HEIGHT);
+
 		//Css
 		scene.getStylesheets().add(url+"resources/css/BullAnalytics.css");
-		this.assetsGrid.getStyleClass().addAll("grid", "assetsGrid");
-		this.graphicGrid.getStyleClass().addAll("grid", "graphicGrid");
+		this.stocksGrid.getStyleClass().addAll("grid", "stocksGrid");
+		this.chartGrid.getStyleClass().addAll("grid", "chartGrid");
 		this.analyticGrid.getStyleClass().addAll("grid", "analyticGrid");
 		this.tradeGrid.getStyleClass().addAll("grid", "tradeGrid");
 
@@ -135,5 +148,24 @@ public class BullAnalytics extends Application {
 		//this.bullStage.setFullScreen(true);
 		this.bullStage.setResizable(false);
 		this.bullStage.show();
+	}
+
+	//Make Updates in 500 miliseconds
+	private class UpdateData implements Runnable {
+		public void run() {
+        		try {
+				//Update Assets
+				
+				//Update "Media Movel"
+
+				//Update Chart
+
+
+                		Thread.sleep(1000);
+                		executor.execute(this);
+			} catch (InterruptedException ex) {
+                		ex.printStackTrace();
+            		}
+       		}
 	}
 }

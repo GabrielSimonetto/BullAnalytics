@@ -36,11 +36,14 @@ import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 import java.net.URL;
 
-public class AssetsGrid extends GridPane{
-	private ObservableList<String> assets = FXCollections.observableArrayList();
+public class StocksGrid extends GridPane{
+
+	//Variables
+	private ObservableList<String> stocks = FXCollections.observableArrayList();
+	private String selectedStock;
 
 	//Contruct the base of a Cell
-	static class XCell extends ListCell<String>{
+/*	static class XCell extends ListCell<String>{
 		private HBox hbox = new HBox();
 		private Pane pane = new Pane();
 		private Label label = new Label("");
@@ -62,7 +65,7 @@ public class AssetsGrid extends GridPane{
 			if(item != null && !empty){
 				setText(item);
 				/*setGraphic(hbox);*/
-			}
+/*			}
 		}
 
 		//Buttons Events
@@ -71,38 +74,52 @@ public class AssetsGrid extends GridPane{
 		}
 
 	}
+*/
+	public StocksGrid() {
 
-	public AssetsGrid() {
 		String[] array = new String[30];
 		for(int i=0; i<30; i++){
 			array[i] = "Asset "+i;
 		}
 
-		//Search Option -- Maybe
+		//Add in Observable List
+		this.stocks.addAll(array);
 
+		//Sort List
+		Collections.sort(this.stocks);
 
-		//Assets List
-		this.assets.addAll(array);
-		Collections.sort(this.assets);
-		ListView<String> listv = new ListView<String>(this.assets);
-		listv.setCellFactory(param -> new XCell());
+		//Creat List View
+		ListView<String> listv = new ListView<String>(this.stocks);
+		listv.prefWidthProperty().bind(this.widthProperty());
+		listv.prefHeightProperty().bind(this.heightProperty());
 
+		//Add Listener for Selected Item
 		listv.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
     			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        			System.out.println("ListView selection changed from oldValue = "
-               				 + oldValue + " to newValue = " + newValue);
+				selectedStock = newValue;
+				//updateAssets(oldValue);
     			}
 		});
 
-		listv.getStyleClass().addAll("assets-list");
-		ColumnConstraints colum1 = new ColumnConstraints();
-		RowConstraints row1 = new RowConstraints();
-		colum1.setPercentWidth(100);
-		row1.setPercentHeight(100);
-		this.getColumnConstraints().addAll(colum1);
-		this.getRowConstraints().addAll(row1);
+		//Set Style
+		listv.getStyleClass().addAll("stocks-list");
+
+		//Add in Grid
 		this.add(listv,0,0);
+	}
+	//Get
+	private String getStock(){
+		return this.selectedStock;
+	}
+
+	//Update
+	private void updateAssets(String a){
+		//Add new component
+		//this.stocks.add("JUNIO"+a);
+
+		//Sort List
+		Collections.sort(this.stocks);
 	}
 }
 

@@ -22,7 +22,8 @@
 }
 .list-cell:filled:selected:focused, .list-cell:filled:selected {
     	/*-fx-background-color: linear-gradient(#328BDB 0%, #207BCF 25%, #1973C9 75%, #0A65BF 100%);*/
-	-fx-background-color: #C9AD0C;
+	/*-fx-background-color: #C9AD0C;*/
+	-fx-background-color: #D1B633;
    	-fx-text-fill: #1f201f;
 }
 
@@ -36,28 +37,36 @@
 }
 
 /*Scroll Bar*/
-.assets-list .scroll-bar{
+.stocks-list .scroll-bar{
 	-fx-background-color:#1f201f;
 }
 
-.assets-list .scroll-bar:vertical .thumb {
+.stocks-list .scroll-bar:horizontal .thumb,
+.stocks-list .scroll-bar:vertical .thumb {
 	-fx-background-color: #333333;
 	-fx-background-insets: 1, 0, 0;
 	-fx-background-radius: 2em;
 }
+
+
+/*Line Chart*/
+.chart-plot-background{
+	-fx-background-color:#1F201F;
+}
+
 /* Grids Styles  */
 .grid{
-	-fx-border-width: 0;
+	-fx-border-width: 3;
 	-fx-border-color: #404040;
 	-fx-text-inner-color: #f4f4f4;
 	/*-fx-fill: FIREBRICK;*/
 }
 
-.assetsGrid{
+.stocksGrid{
 	-fx-border-style: solid none solid solid;
 }
 
-.graphicGrid{
+.chartGrid{
 	-fx-border-style: solid solid none solid;
 }
 
