@@ -34,7 +34,8 @@ import java.util.concurrent.ThreadFactory;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 import java.net.URL;
-
+import java.util.Date;
+import java.text.SimpleDateFormat;
 public class BullAnalytics extends Application {
 
 	//----Variables
@@ -60,11 +61,14 @@ public class BullAnalytics extends Application {
 
 	//Aux
 	private final String url = Main.class.getResource("/").toString();
-	private int countTime = 0;
+	private String auxTime;
 	private String activeStock = "";
 	
 	@Override
 	public void init() throws Exception {
+
+		//Start Aux
+		auxTime = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(new Date()).split(" ")[1].split(":")[1];
 
 		//Start Data
 		this.operational= new Operacional();
@@ -149,12 +153,11 @@ public class BullAnalytics extends Application {
 		public void run() {
         		try {
 
-				//Update Assets
+				//Changed Stock
 				String newActiveStock = stocksGrid.getActiveStock();
 				if(!activeStock.equals(newActiveStock)){
 					activeStock = newActiveStock;
-					System.out.println("OK");
-					//Update "Media Movel"
+					//System.out.println("OK");
 
 					//Update Chart
 	/*				chartGrid.updateChart(
@@ -163,7 +166,8 @@ public class BullAnalytics extends Application {
 							algebric.
 	*/			}
 
-				//Can Analyse new configurations
+				String actualTime = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(new Date()).split(" ")[1].split(":")[1];
+				//Changed Analyse
 				if(analyticGrid.getCanAnalyse()){
 					analyticGrid.setCanAnalyse(false);
 					System.out.println(analyticGrid.getActiveTimeSerie());
@@ -172,8 +176,41 @@ public class BullAnalytics extends Application {
 					System.out.println(analyticGrid.getActiveMinValue());
 					System.out.println(analyticGrid.getActivePivotValue());
 					System.out.println(analyticGrid.getActiveMaxValue());
+
+					if(analyticGrid.getActiveIntervalIntraday().equals("1min")){
+						auxTime = actualTime;
+					}
 				}
 
+				//Changed Time
+				if(analyticGrid.getActiveTimeSerie().equals("INTRADAY") && !actualTime.equals(auxTime) ){
+					if(analyticGrid.getActiveIntervalIntraday().equals("1min")){
+						//Update one line
+						System.out.println("1 min");
+
+					}else if(analyticGrid.getActiveIntervalIntraday().equals("5min")){
+						if(actualTime.substring(1).equals("5")){//End 5
+							//Update one line
+
+						}
+					}else if(analyticGrid.getActiveIntervalIntraday().equals("15min")){
+						if(actualTime.equals("15") || actualTime.equals("30") || 
+							actualTime.equals("45") || actualTime.equals("00")){
+							//Update one line
+
+						}
+					}else if(analyticGrid.getActiveIntervalIntraday().equals("30min")){
+						if(actualTime.equals("30") || actualTime.equals(00)){
+							//Update one line
+						}
+					}else if(analyticGrid.getActiveIntervalIntraday().equals("60min")){
+						if(actualTime.equals("00")){
+							//Update one line
+						}
+					}
+				}
+
+				auxTime = actualTime;
 
                 		Thread.sleep(50);
                 		executor.execute(this);

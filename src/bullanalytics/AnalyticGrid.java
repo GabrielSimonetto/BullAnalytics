@@ -33,21 +33,20 @@ import javafx.beans.value.ObservableValue;
 public class AnalyticGrid extends GridPane{
 	
 	//Variables
-	private String activeTimeSerie = "";
-	private String activeIntervalIntraday = "";
-	private String activeSmaMod = "";
+	private String activeTimeSerie = "INTRADAY";
+	private String activeIntervalIntraday = "15";
+	private String activeSmaMod = "Simple";
 	private String activeMinValue = "";
 	private String activePivotValue = "";
-	private String activeMaxValue = "";
+	private String activeMaxValue = "20";
 	private boolean canAnalyse = false;
 
 	public AnalyticGrid() {
-		//Variables
 		ObservableList<String> timeSeries = FXCollections.observableArrayList(
-				"INTRADAY", "DAILY", "WEEKLY");
+				"INTRADAY", "DAILY", "WEEKLY", "MONTHLY");
 
 		ObservableList<String> intervalIntraday = FXCollections.observableArrayList(
-				"1", "5", "15", "30", "60");
+				"1min", "5min", "15min", "30min", "60min");
 
 		ObservableList<String> smaMod = FXCollections.observableArrayList(
 				"Simple", "Complex");
@@ -56,6 +55,10 @@ public class AnalyticGrid extends GridPane{
 		ComboBox timeSeriesBox = new ComboBox(timeSeries);
 		ComboBox intervalIntradayBox = new ComboBox(intervalIntraday);
 		ComboBox smaModBox = new ComboBox(smaMod);
+
+		timeSeriesBox.getSelectionModel().select(0);
+		intervalIntradayBox.getSelectionModel().select(2);
+		smaModBox.getSelectionModel().select(0);
 
 		//Creat TextField
 		TextField minValue = new TextField();
@@ -68,9 +71,6 @@ public class AnalyticGrid extends GridPane{
 		maxValue.setPromptText("Max");
 		maxValue.setText("20");
 
-		//Set Style TextField
-		//listv.getStyleClass().addAll("textFields");
-
 		//Add Listener for Selected Intraday
 		timeSeriesBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -78,20 +78,11 @@ public class AnalyticGrid extends GridPane{
 				if(newValue.equals("INTRADAY")){
 					add(intervalIntradayBox,0,1);
 				}else{
-					activeIntervalIntraday = "";
 					getChildren().remove(intervalIntradayBox);
 				}
-				activeTimeSerie = newValue;
     			}
 		});
 		
-		//Add Listener for Intraday Interval
-		intervalIntradayBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-			@Override
-    			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				activeIntervalIntraday = newValue;
-    			}
-		});
 		//Add Listener for Selected "Media Movel" Mod
 		smaModBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -100,8 +91,8 @@ public class AnalyticGrid extends GridPane{
 					getChildren().remove(minValue);
 					getChildren().remove(pivotValue);
 					getChildren().remove(maxValue);
-					minValue.setText("");
-					pivotValue.setText("");
+					//minValue.setText("");
+					//pivotValue.setText("");
 					add(maxValue,2,1);
 				}else{
 					getChildren().remove(minValue);
@@ -111,7 +102,6 @@ public class AnalyticGrid extends GridPane{
 					add(pivotValue,2,1);
 					add(maxValue,3,1);
 				}
-				activeSmaMod = newValue;
     			}
 		});
 
@@ -136,10 +126,23 @@ public class AnalyticGrid extends GridPane{
 	        analyseBtn.setOnAction(new EventHandler<ActionEvent>() {
         		@Override
            	 	public void handle(ActionEvent event) {
-				canAnalyse = true;                			
-				activeMinValue = minValue.getText();
-				activePivotValue = pivotValue.getText();
-				activeMaxValue = maxValue.getText();
+				canAnalyse = true;
+				activeTimeSerie = timeSeriesBox.getValue().toString();
+				if(activeTimeSerie.equals("INTRADAY")){
+					activeIntervalIntraday = intervalIntradayBox.getValue().toString();
+				}else{
+					activeIntervalIntraday = "";
+				}
+				activeSmaMod = smaModBox.getValue().toString();
+
+				if(activeSmaMod.equals("Complex")){
+					activeMinValue = minValue.getText();
+					activePivotValue = pivotValue.getText();
+					activeMaxValue = maxValue.getText();
+				}else{
+					activeMinValue = "";
+					activePivotValue = "";
+				}
            		}
         	});
 
@@ -171,7 +174,9 @@ public class AnalyticGrid extends GridPane{
 
 		//Add in Grid
 		this.add(timeSeriesBox,0,0);
+		this.add(intervalIntradayBox,0,1);
 		this.add(smaModBox,2,0);
+		this.add(maxValue,2,1);
 		this.add(analyseBtn,4,2);
 	}
 

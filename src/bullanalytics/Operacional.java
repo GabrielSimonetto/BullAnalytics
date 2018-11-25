@@ -1,35 +1,126 @@
 package bullanalytics;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-
-
 public class Operacional {
 
-	//https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=5min&apikey=demo
+	private final String strPathUserStocks = "resources/csv/user_stocks.csv";
+	private final String strPathBaseStocks = "resources/csv/base_stocks.csv";
 	
-//	public static calculaMediaMovel()
+	//retorna uma mensagem para ser exibida para o usuario
+	public String addStock(String stockName, String stockSymbol) {
+		
+		if(URLRequest.testAPI() == false) {
+			return ("A conexao com o API esta falhando");
+		}
+		
+		try {
+			//Testa se o simbolo existe.
+			String firstLine = (URLRequest.returnFirstLine(stockSymbol, "5min"));
+			
+			if(firstLine.equals("{")) {
+				return ("O Simbolo passado nao existe no AlphaVenture e nao foi adicionado a sua lista");
+			}
+			else {
+				//Escreve nova linha em csv.
+				final Writer output;
+				//append == true
+				output = new BufferedWriter(new FileWriter(strPathUserStocks, true));
+				output.append(stockName + "," + stockSymbol);
+				output.close();
+				return (stockName + " foi criada com sucesso!");
+			}		
+		}
+		catch(IOException e){
+			return ("IOException detectada");
+		}
+	
+	}
+	
+    public void removeStock(String stockName, String stockSymbol) {
+    
+    	String lineToRemove = (stockName + "," + stockSymbol);
+    	
+		try {
+	
+	      File inFile = new File(strPathUserStocks);
+	      
+	      //File temporario que no fim da operacao vira o oficial
+	      System.out.println(inFile.getAbsolutePath());
+	      File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
+	
+	      BufferedReader br = new BufferedReader(new FileReader(inFile));
+	      PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
+	
+	      String line = null;
+	
+	      //Read from the original file and write to the new
+	      //unless content matches data to be removed.
+	      while ((line = br.readLine()) != null) {
+	
+	        if (line.trim().equals(lineToRemove) == false) {
+	          pw.println(line);
+	          pw.flush();
+	        }
+	        
+	      }
+	      pw.close();
+	      br.close();
+	      
+	      //Delete the original file
+	      if (inFile.delete() == false) {
+	        System.out.println("Could not delete file");
+	        return;
+	      }
+	
+	      //Rename the new file to the filename the original file had.
+	      if (tempFile.renameTo(inFile) == false)
+	        System.out.println("Could not rename file");
+	
+	    }
+	    catch (FileNotFoundException ex) {
+	      ex.printStackTrace();
+	    }
+	    catch (IOException ex) {
+	      ex.printStackTrace();
+	    }
+    }
+	
+	public void initializeUserStocks() {
+
+		Path src = Paths.get(strPathBaseStocks);
+		Path dst = Paths.get(strPathUserStocks);
+		
+		try {
+			Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 	public ArrayList<ArrayList<String>> getStocks(){
 
-		//ClassLoader classLoader = getClass().getClassLoader();
-		//File file = new File(classLoader.getResource("csv/stocks.csv").getFile());
-	//	String urlMain = Main.class.getResource("/").toString();
-	//	System.out.println(urlMain+"resources/csv/stocks.csv");
-		File file = new File("resources/csv/stocks.csv");
+//		ClassLoader classLoader = getClass().getClassLoader();
+//		File file = new File(classLoader.getResource(fileName).getFile());
+		//String url = Operacional.class.getResource("/").toString();
+		//System.out.println(".."+url+"res/stocks.csv");
+		File file = new File(strPathUserStocks);
 		
 		try(Scanner fileReader = new Scanner(file)){
 
@@ -88,124 +179,5 @@ public class Operacional {
 		}
 		return null;
 	}
-
-	//Pick data of stock
-	public ArrayList<ArrayList<String>> pullInfo2(String symbol, String interval) {
-		
-		String url = "https://www.alphavantage.co/query?"
-				+ "function=TIME_SERIES_INTRADAY"
-				+ "&symbol=" + symbol
-				+ "&interval=" + interval+"min"
-				// minha API key pra pedir intervalo de 1 minuto
-				+ "&apikey=HNC81M7JBQA03BPZ"
-				+ "&datatype=csv";
-		
-		URL obj;
-		try {
-			obj = new URL(url);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			return null;
-		}
-		
-		try {
-//			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-			URLConnection con = (URLConnection) obj.openConnection();
-			
-//			int responseCode = con.getResponseCode();
-			System.out.println("\nSending 'GET' Request to URL : " + url);
-//			System.out.println("Response Code : " + responseCode);
-			BufferedReader in = new BufferedReader( new InputStreamReader(con.getInputStream()));
-			boolean reading = true;
-			
-			//Codigo do csv
-			ArrayList<String> columns = new ArrayList<String>();
-			LinkedList<String> rows = new LinkedList<String>();
-
-			while(reading){
-				String line = in.readLine();
-
-				if(line == null) {
-					reading = false;
-				} else if(columns.isEmpty()){
-					String[] itens = line.split(",");
-					for(String item : itens){
-						columns.add(item);
-					}
-				}else{
-					String[] itens = line.split(",");
-					for(String item : itens){
-						rows.add(item);
-					}
-				}
-			}
-			ArrayList<ArrayList<String>> dataReturn = new ArrayList<ArrayList<String>>();
-			int aux = columns.size();
-			dataReturn.add(columns);
-			while(!rows.isEmpty()){
-				ArrayList<String> auxArray = new ArrayList<String>();
-				for(int i=0; i< aux; i++){
-					auxArray.add(rows.removeFirst());
-				}
-				dataReturn.add(auxArray);
-			}
-			return dataReturn;
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 	
-	/*public static void main(String[] args) throws Exception  {
-
-		ArrayList<ArrayList<String>> stocks = getStocks();
-		String interval = "5min";
-		
-		for(ArrayList<String> a : stocks) {
-			String symbol = a.get(1);
-		
-			System.out.println("Testando " + a.get(0) + ", simbolo " + symbol);
-			
-			ArrayList<ArrayList<String>> lixo = URLRequest.pullInfo2(symbol, interval);
-		}	
-		
-//		//Mostra os stocks todos
-//		for(ArrayList<String> a : stocks) {
-//			for(String t : a) {
-//				System.out.print(t+",");
-//			}
-//			System.out.println();
-//		}	
-		
-//		String interval = "5min";
-//		for
-//		
-//		ArrayList<ArrayList<String>> tabela = URLRequest.pullInfo2("VNET", "5min");
-//		ArrayList<Double> closeArray = Algebric.getClose(tabela);
-//		ArrayList<Double> mediaMovel = Algebric.getMediaMovel(closeArray, 15);		
-//		
-////		ArrayList<String> indexClose = tabela.get(0);
-////		System.out.println(indexClose.toString());
-////		System.out.println(indexClose.indexOf("close"));
-//		
-////		for(Double a : closeArray) {
-////			System.out.println(a);
-////		}
-//		
-//		for(Double a : mediaMovel) {
-//			System.out.println(a);
-//		}
-//		
-//		//Mostra a tabela toda
-////		for(ArrayList<String> a : pullInfo2(url)) {
-////			for(String t : a) {
-////				System.out.print(t+",");
-////			}
-////			System.out.println();
-////		}	
-	
-	
-	//}
-*/	
 } 

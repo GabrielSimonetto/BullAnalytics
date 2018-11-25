@@ -79,15 +79,15 @@ public class StocksGrid extends GridPane{
 	public StocksGrid(ArrayList<ArrayList<String>> dataStocks) {
 		//Sort List
 		//Collections.sort(dataStocks);
-		int indexName = dataStocks.get(0).indexOf("name");
-		int indexSymbol = dataStocks.get(0).indexOf("symbol");
+		//int indexName = dataStocks.get(0).indexOf("name");
+		//int indexSymbol = dataStocks.get(0).indexOf("symbol");
 
-		for(int i=1; i<dataStocks.size(); i++){
+		for(int i=0; i<dataStocks.size(); i++){
 			//Add in Observable List
-			this.stocks.add(dataStocks.get(i).get(indexName));
+			this.stocks.add(dataStocks.get(i).get(0));
 			
 			//Add in symbol List
-			this.symbolStocks.add(dataStocks.get(i).get(indexSymbol));
+			this.symbolStocks.add(dataStocks.get(i).get(1));
 		}
 
 		//Creat List View
