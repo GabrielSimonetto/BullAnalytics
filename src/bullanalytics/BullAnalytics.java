@@ -155,8 +155,6 @@ public class BullAnalytics extends Application {
 	private class UpdateData implements Runnable {
 		public void run() {
         		try {
-				//Variables
-
 				//Changed Stock
 				String newActiveStock = stocksGrid.getActiveStock();
 				if(!activeStock.equals(newActiveStock)){
@@ -174,17 +172,12 @@ public class BullAnalytics extends Application {
 								analyticGrid.getActiveMinValue());
 						ArrayList<Double> smaPivotTable = algebric.getMediaMovel(closeTable, 
 								analyticGrid.getActivePivotValue());
-						chartGrid.updateChart(activeStock, stocksTable, smaMinTable, smaPivotTable, smaMaxTable);
+						chartGrid.updateChart(activeStock, stocksTable, smaMinTable, smaPivotTable, smaMaxTable, true);
 					}else{
-						chartGrid.updateChart(activeStock, stocksTable, null, null, smaMaxTable);
+						chartGrid.updateChart(activeStock, stocksTable, null, null, smaMaxTable, false);
 					}
 
-					//Update Chart
-	/*				chartGrid.updateChart(
-							activeStock,
-							operational.pullInfo2(activeStock,"5"),
-							algebric.
-	*/			}
+				}
 
 				String actualTime = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(new Date()).split(" ")[1].split(":")[1];
 				//Changed Analyse

@@ -70,15 +70,16 @@ public class ChartGrid extends GridPane{
 
 	//Update Chart
 	public void updateChart(String newStock, ArrayList<ArrayList<String>> newDataStock, ArrayList<Double> newDataSMAMin,
-		      	ArrayList<Double> newDataSMAPivot, ArrayList<Double> newDataSMAMax){
+		      	ArrayList<Double> newDataSMAPivot, ArrayList<Double> newDataSMAMax, boolean isComplex){
 
 		//Remove if not Complex
 		//this.chart.getData().();
 	//	this.chart.getData().removeAll(this.dataSMAMin, this.dataSMAPivot);
 
-		if(newDataSMAMin != null){
+		if(isComplex){
 		//	this.chart.getData().addAll(this.dataSMAMax, this.dataStock, this.dataSMAMin, this.dataSMAPivot);
 			//this.dataSMAMax.setName("SMA Max");
+			System.out.println("Is Null");
 		}else{
 			//this.chart.getData().addAll(this.dataSMAMax, this.dataStock);
 			//this.dataSMAMax.setName("SMA");
@@ -113,11 +114,11 @@ public class ChartGrid extends GridPane{
 			this.dataStock.getData().add(new XYChart.Data(label,value));
 
 			//Add in SMAMax Data
-			this.dataSMAMax.getData().add(new XYChart.Data(label,newDataSMAMax.get(i)));//Don't have labels
+			this.dataSMAMax.getData().add(new XYChart.Data(label,newDataSMAMax.get(i-1)));//Don't have labels
 
-			if(this.dataSMAMin != null){
-				this.dataSMAMin.getData().add(new XYChart.Data(label,newDataSMAMin.get(i)));//Don't have labels
-				this.dataSMAPivot.getData().add(new XYChart.Data(label,newDataSMAPivot.get(i)));//Don't have labels
+			if(isComplex){
+				this.dataSMAMin.getData().add(new XYChart.Data(label,newDataSMAMin.get(i-1)));//Don't have labels
+				this.dataSMAPivot.getData().add(new XYChart.Data(label,newDataSMAPivot.get(i-1)));//Don't have labels
 			}
 		}
 	}
