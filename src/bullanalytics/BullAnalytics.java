@@ -1,5 +1,8 @@
 package bullanalytics;
 
+//Collections
+import java.util.ArrayList;
+
 //Aplication
 import com.sun.javafx.application.LauncherImpl;
 import javafx.application.Application;
@@ -152,12 +155,29 @@ public class BullAnalytics extends Application {
 	private class UpdateData implements Runnable {
 		public void run() {
         		try {
+				//Variables
 
 				//Changed Stock
 				String newActiveStock = stocksGrid.getActiveStock();
 				if(!activeStock.equals(newActiveStock)){
 					activeStock = newActiveStock;
 					//System.out.println("OK");
+					ArrayList<ArrayList<String>> stocksTable = URLRequest.pullInfo2(analyticGrid.getActiveTimeSerie(),
+                                                         activeStock, analyticGrid.getActiveIntervalIntraday());
+					ArrayList<Double> closeTable = algebric.getClose(stocksTable);
+					ArrayList<Double> smaMaxTable = algebric.getMediaMovel(closeTable, 
+								analyticGrid.getActiveMaxValue());
+
+					//Update SMA
+					if(analyticGrid.getActiveSmaMod().equals("Complex")){
+						ArrayList<Double> smaMinTable = algebric.getMediaMovel(closeTable, 
+								analyticGrid.getActiveMinValue());
+						ArrayList<Double> smaPivotTable = algebric.getMediaMovel(closeTable, 
+								analyticGrid.getActivePivotValue());
+						chartGrid.updateChart(activeStock, stocksTable, smaMinTable, smaPivotTable, smaMaxTable);
+					}else{
+						chartGrid.updateChart(activeStock, stocksTable, null, null, smaMaxTable);
+					}
 
 					//Update Chart
 	/*				chartGrid.updateChart(

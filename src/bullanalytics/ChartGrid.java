@@ -73,14 +73,15 @@ public class ChartGrid extends GridPane{
 		      	ArrayList<Double> newDataSMAPivot, ArrayList<Double> newDataSMAMax){
 
 		//Remove if not Complex
-		this.chart.getData().remove(this.dataSMAMin);
-		this.chart.getData().remove(this.dataSMAPivot);
+		//this.chart.getData().();
+		this.chart.getData().removeAll(this.dataSMAMin, this.dataSMAPivot);
 
-		if(this.dataSMAMin != null){
-			this.chart.getData().addAll(this.dataSMAMin, this.dataSMAPivot);
+		if(newDataSMAMin != null){
+			this.chart.getData().addAll(this.dataSMAMax, this.dataStock, this.dataSMAMin, this.dataSMAPivot);
 			this.dataSMAMax.setName("SMA Max");
 		}else{
-			this.dataSMAMax.setName("SMA");
+			//this.chart.getData().addAll(this.dataSMAMax, this.dataStock);
+			//this.dataSMAMax.setName("SMA");
 		}
 
 		//Set Stock Name

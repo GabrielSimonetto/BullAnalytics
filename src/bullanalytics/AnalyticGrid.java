@@ -36,8 +36,8 @@ public class AnalyticGrid extends GridPane{
 	private String activeTimeSerie = "INTRADAY";
 	private String activeIntervalIntraday = "15";
 	private String activeSmaMod = "Simple";
-	private String activeMinValue = "";
-	private String activePivotValue = "";
+	private String activeMinValue = "0";
+	private String activePivotValue = "0";
 	private String activeMaxValue = "20";
 	private boolean canAnalyse = false;
 
@@ -140,8 +140,8 @@ public class AnalyticGrid extends GridPane{
 					activePivotValue = pivotValue.getText();
 					activeMaxValue = maxValue.getText();
 				}else{
-					activeMinValue = "";
-					activePivotValue = "";
+					activeMinValue = "0";
+					activePivotValue = "0";
 				}
            		}
         	});
@@ -196,13 +196,13 @@ public class AnalyticGrid extends GridPane{
 	public String getActiveSmaMod(){
 		return this.activeSmaMod;
 	}
-	public String getActiveMinValue(){
-		return this.activeMinValue;
+	public int getActiveMinValue(){
+		return Integer.parseInt(this.activeMinValue);
 	}
-	public String getActivePivotValue(){
-		return this.activePivotValue;
+	public int getActivePivotValue(){
+		return Integer.parseInt(this.activePivotValue);
 	}
-	public String getActiveMaxValue(){
-		return this.activeMaxValue;
+	public int getActiveMaxValue(){
+		return Integer.parseInt(this.activeMaxValue);
 	}
 }

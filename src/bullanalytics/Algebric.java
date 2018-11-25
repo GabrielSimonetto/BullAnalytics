@@ -7,18 +7,31 @@ import java.util.Stack;
 
 public class Algebric {
 	
-	// -1 = vende, 1 = compra 
-	public static int vereditoSimples(ArrayList<Double> mediaMovelArray, ArrayList<Double> closeArray) {
-		
-		//mrv = mostRecentValuye
-		Double mrvMM = mediaMovelArray.get(0);
-		Double mrvClose = closeArray.get(0);
-		
-		if(mrvMM > mrvClose) {
-			return -1;
-		}
-		return 1;	
-	}
+	// -1 = vende, 0 = hold, 1 = compra
+        public static int vereditoSimples(ArrayList<Double> mediaMovelArray, ArrayList<Double> closeArray) {
+
+                //mrv = mostRecentValue
+                Double mrvMM = mediaMovelArray.get(0);
+                Double mrvClose = closeArray.get(0);
+
+                //penultimos valores
+                Double pMM = mediaMovelArray.get(1);
+                Double pClose = closeArray.get(1);
+
+                boolean pMMMaiorQueClose = pMM > pClose;
+                boolean mrvMMMaiorQueClose = mrvMM > mrvClose;
+
+                //teste para se houve intersecao
+                if(pMMMaiorQueClose != mrvMMMaiorQueClose) {
+                        if(mrvMMMaiorQueClose) {
+                                return -1;
+                        }
+                        else {
+                                return 1;
+                        }
+                }
+                return 0;
+        }
 
 	//a analise complexa e inspirada no metodo "Didi index"
 	// -1 = vende, 0 = hold, 1 = compra, 2 = dados insuficientes;
