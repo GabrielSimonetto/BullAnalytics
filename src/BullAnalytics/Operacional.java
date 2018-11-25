@@ -22,6 +22,8 @@ public class Operacional {
 	static String strPathUserStocks = "res/user_stocks.csv";
 	static String strPathBaseStocks = "res/base_stocks.csv";
 	
+	
+	
 	public static String addStockDoRobson(String stockName, String stockSymbol) {
 		
 		try {
@@ -40,7 +42,6 @@ public class Operacional {
 		}
 	
 	}
-	
 	
 	//retorna uma mensagem para ser exibida para o usuario
 	public static String addStock(String stockName, String stockSymbol) {
