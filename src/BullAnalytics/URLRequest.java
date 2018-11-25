@@ -8,9 +8,76 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Queue;
 
 public class URLRequest {
+	
+	//testa se a conexao com o API ta funcionando
+	public static boolean testAPI() {
+		
+		String url = "https://www.alphavantage.co/query?"
+				+ "function=TIME_SERIES_INTRADAY"
+				+ "&symbol=MSFT"
+				+ "&interval=5min" 
+				// minha API key pra pedir intervalo de 1 minuto
+				+ "&apikey=HNC81M7JBQA03BPZ"
+				+ "&datatype=csv";
+		
+		URL obj;
+		
+		try {
+			obj = new URL(url);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		try {
+			URLConnection con = (URLConnection) obj.openConnection();
+			BufferedReader in = new BufferedReader( new InputStreamReader(con.getInputStream()));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+public static String returnFirstLine(String symbol, String interval) {
+		
+		String url = "https://www.alphavantage.co/query?"
+				+ "function=TIME_SERIES_INTRADAY"
+				+ "&symbol=" + symbol
+				+ "&interval=" + interval
+				// minha API key pra pedir intervalo de 1 minuto
+				+ "&apikey=HNC81M7JBQA03BPZ"
+				+ "&datatype=csv";
+		
+		URL obj;
+		try {
+			obj = new URL(url);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		try {
+			URLConnection con = (URLConnection) obj.openConnection();
+			BufferedReader in = new BufferedReader( new InputStreamReader(con.getInputStream()));
+
+			String line = in.readLine();
+
+			if(line == null) {
+				return null;
+			} 
+			else{
+				return line;
+			}
+		}	
+		catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	public static ArrayList<ArrayList<String>> pullInfo2(String symbol, String interval) {
 		
@@ -31,12 +98,7 @@ public class URLRequest {
 		}
 		
 		try {
-//			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 			URLConnection con = (URLConnection) obj.openConnection();
-			
-//			int responseCode = con.getResponseCode();
-//			System.out.println("\nSending 'GET' Request to URL : " + url);
-//			System.out.println("Response Code : " + responseCode);
 			BufferedReader in = new BufferedReader( new InputStreamReader(con.getInputStream()));
 			boolean reading = true;
 			
@@ -81,28 +143,6 @@ public class URLRequest {
 	
 	public static void main(String[] args) {
 		
-		ArrayList<ArrayList<String>> tabela = pullInfo2("VNET", "5min");
-		ArrayList<Double> closeArray = Algebric.getClose(tabela);
-		ArrayList<Double> mediaMovel = Algebric.getMediaMovel(closeArray, 15);		
-		
-//		ArrayList<String> indexClose = tabela.get(0);
-//		System.out.println(indexClose.toString());
-//		System.out.println(indexClose.indexOf("close"));
-		
-//		for(Double a : closeArray) {
-//			System.out.println(a);
-//		}
-		
-		for(Double a : mediaMovel) {
-			System.out.println(a);
-		}
-		
-		//Mostra a tabela toda
-//		for(ArrayList<String> a : pullInfo2(url)) {
-//			for(String t : a) {
-//				System.out.print(t+",");
-//			}
-//			System.out.println();
-//		}
+		System.out.println(testAPI());;
 	}
 }

@@ -5,6 +5,15 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Algebric {
+
+	// preferi deixar  as listas como parametro pq salva processamento no meio do main
+//	private static boolean vereditoVender(ArrayList<Double> closeList, ArrayList<Double> mmList) {
+//		double lastClose = closeList.get(closeList.size() - 1);
+//		double lastMM = mmList.get(0);
+//		
+//		
+//	}
+	
 	public static ArrayList<Double> getClose(ArrayList<ArrayList<String>> tabela){
 		
 		int indexClose = tabela.get(0).indexOf("close");
