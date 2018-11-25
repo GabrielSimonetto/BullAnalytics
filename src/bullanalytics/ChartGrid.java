@@ -62,7 +62,7 @@ public class ChartGrid extends GridPane{
 		this.dataSMAMax = new XYChart.Series();
 
 		//Add in Chart
-		this.chart.getData().addAll(this.dataSMAMax, this.dataStock);
+		this.chart.getData().addAll(this.dataSMAMax, this.dataStock, this.dataSMAMin, this.dataSMAPivot);
 
 		//Add in Grid
 		this.add(chart, 0, 0);
@@ -74,11 +74,11 @@ public class ChartGrid extends GridPane{
 
 		//Remove if not Complex
 		//this.chart.getData().();
-		this.chart.getData().removeAll(this.dataSMAMin, this.dataSMAPivot);
+	//	this.chart.getData().removeAll(this.dataSMAMin, this.dataSMAPivot);
 
 		if(newDataSMAMin != null){
-			this.chart.getData().addAll(this.dataSMAMax, this.dataStock, this.dataSMAMin, this.dataSMAPivot);
-			this.dataSMAMax.setName("SMA Max");
+		//	this.chart.getData().addAll(this.dataSMAMax, this.dataStock, this.dataSMAMin, this.dataSMAPivot);
+			//this.dataSMAMax.setName("SMA Max");
 		}else{
 			//this.chart.getData().addAll(this.dataSMAMax, this.dataStock);
 			//this.dataSMAMax.setName("SMA");
@@ -86,7 +86,7 @@ public class ChartGrid extends GridPane{
 
 		//Set Stock Name
 		chart.setLegendVisible(true);
-		this.dataStock.setName(newStock);
+		//this.dataStock.setName(newStock);
 
 		//Clear Chart
 		this.dataStock.getData().clear();
