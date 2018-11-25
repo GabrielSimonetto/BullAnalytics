@@ -3,44 +3,45 @@ package bullanalytics;
 //----Collections
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-//import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.Collections;
 
 //----Scene
 //Text
-import javafx.scene.text.Text;
+//import javafx.scene.text.Text;
 //import javafx.scene.text.TextAlignment;
 //Control
 //import javafx.scene.control.TextField;
 //import javafx.scene.control.PasswordField;
-import javafx.scene.control.Label;
-import javafx.scene.control.Button;
+//import javafx.scene.control.Label;
+//import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ListCell;
 //Layout
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.RowConstraints;
+//import javafx.scene.layout.HBox;
+//import javafx.scene.layout.Pane;
+//import javafx.scene.layout.Priority;
+//import javafx.scene.layout.ColumnConstraints;
+//import javafx.scene.layout.RowConstraints;
 
 //Events
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+//import javafx.event.ActionEvent;
+//import javafx.event.EventHandler;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 //Others
-import javafx.geometry.Pos;
-import javafx.geometry.Insets;
-import java.net.URL;
+//import javafx.geometry.Pos;
+//import javafx.geometry.Insets;
+//import java.net.URL;
 
 public class StocksGrid extends GridPane{
 
 	//Variables
 	private ObservableList<String> stocks = FXCollections.observableArrayList();
-	private String selectedStock;
+	private ArrayList<String> symbolStocks = new ArrayList<String>();
+	private String activeStock = "";
 
 	//Contruct the base of a Cell
 /*	static class XCell extends ListCell<String>{
@@ -75,18 +76,19 @@ public class StocksGrid extends GridPane{
 
 	}
 */
-	public StocksGrid() {
-
-		String[] array = new String[30];
-		for(int i=0; i<30; i++){
-			array[i] = "Asset "+i;
-		}
-
-		//Add in Observable List
-		this.stocks.addAll(array);
-
+	public StocksGrid(ArrayList<ArrayList<String>> dataStocks) {
 		//Sort List
-		Collections.sort(this.stocks);
+		//Collections.sort(dataStocks);
+		int indexName = dataStocks.get(0).indexOf("name");
+		int indexSymbol = dataStocks.get(0).indexOf("symbol");
+
+		for(int i=1; i<dataStocks.size(); i++){
+			//Add in Observable List
+			this.stocks.add(dataStocks.get(i).get(indexName));
+			
+			//Add in symbol List
+			this.symbolStocks.add(dataStocks.get(i).get(indexSymbol));
+		}
 
 		//Creat List View
 		ListView<String> listv = new ListView<String>(this.stocks);
@@ -97,8 +99,8 @@ public class StocksGrid extends GridPane{
 		listv.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
     			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				selectedStock = newValue;
-				//updateAssets(oldValue);
+				int index = stocks.indexOf(newValue);
+				activeStock = symbolStocks.get(index);
     			}
 		});
 
@@ -109,17 +111,17 @@ public class StocksGrid extends GridPane{
 		this.add(listv,0,0);
 	}
 	//Get
-	private String getStock(){
-		return this.selectedStock;
+	public String getActiveStock(){
+		return this.activeStock;
 	}
 
 	//Update
-	private void updateAssets(String a){
+	public void updateStocks(){
 		//Add new component
 		//this.stocks.add("JUNIO"+a);
 
 		//Sort List
-		Collections.sort(this.stocks);
+		//Collections.sort(this.stocks);
 	}
 }
 

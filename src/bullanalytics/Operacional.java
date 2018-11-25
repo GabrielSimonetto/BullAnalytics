@@ -25,11 +25,11 @@ public class Operacional {
 	
 	public ArrayList<ArrayList<String>> getStocks(){
 
-//		ClassLoader classLoader = getClass().getClassLoader();
-//		File file = new File(classLoader.getResource(fileName).getFile());
-		//String url = Operacional.class.getResource("/").toString();
-		//System.out.println(".."+url+"res/stocks.csv");
-		File file = new File("res/stocks.csv");
+		//ClassLoader classLoader = getClass().getClassLoader();
+		//File file = new File(classLoader.getResource("csv/stocks.csv").getFile());
+	//	String urlMain = Main.class.getResource("/").toString();
+	//	System.out.println(urlMain+"resources/csv/stocks.csv");
+		File file = new File("resources/csv/stocks.csv");
 		
 		try(Scanner fileReader = new Scanner(file)){
 
@@ -95,7 +95,7 @@ public class Operacional {
 		String url = "https://www.alphavantage.co/query?"
 				+ "function=TIME_SERIES_INTRADAY"
 				+ "&symbol=" + symbol
-				+ "&interval=" + interval
+				+ "&interval=" + interval+"min"
 				// minha API key pra pedir intervalo de 1 minuto
 				+ "&apikey=HNC81M7JBQA03BPZ"
 				+ "&datatype=csv";
@@ -113,7 +113,7 @@ public class Operacional {
 			URLConnection con = (URLConnection) obj.openConnection();
 			
 //			int responseCode = con.getResponseCode();
-//			System.out.println("\nSending 'GET' Request to URL : " + url);
+			System.out.println("\nSending 'GET' Request to URL : " + url);
 //			System.out.println("Response Code : " + responseCode);
 			BufferedReader in = new BufferedReader( new InputStreamReader(con.getInputStream()));
 			boolean reading = true;

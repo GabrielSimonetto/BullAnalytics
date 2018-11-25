@@ -7,8 +7,8 @@ import javafx.application.Preloader;
 
 //Scene
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.text.Text;
+//import javafx.scene.control.Label;
+//import javafx.scene.text.Text;
 //import javafx.scene.text.TextAlignment;
 //import javafx.scene.control.TextField;
 //import javafx.scene.control.PasswordField;
@@ -46,41 +46,35 @@ public class BullAnalytics extends Application {
 	private Stage bullStage;
 
 	//Grid Panels
-	private GridPane stocksGrid;
-	private GridPane chartGrid;
-	private GridPane analyticGrid;
-	private GridPane tradeGrid;
+	private StocksGrid stocksGrid;
+	private ChartGrid chartGrid;
+	private AnalyticGrid analyticGrid;
+	private TradeGrid tradeGrid;
+
+	//Data
+	private Operacional operational;
+	private Algebric algebric;
 
 	//Timer
 	private ExecutorService executor;
 
 	//Aux
 	private final String url = Main.class.getResource("/").toString();
+	private int countTime = 0;
+	private String activeStock = "";
 	
-	// Just a counter to create some delay while showing preloader.
-	private static final int COUNT_LIMIT = 50000;
-
-	private static int stepCount = 1;
-
-	// Used to demonstrate step couns.
-	public static String STEP() {
-		return stepCount++ + ". ";
-	}
-
 	@Override
 	public void init() throws Exception {
-		// Perform some heavy lifting (i.e. database start, check for application updates, etc. )
-		for (int i = 0; i < COUNT_LIMIT; i++) {
-			double progress = (100 * i) / COUNT_LIMIT;
-			//LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification(progress));
-		}
+
+		//Start Data
+		this.operational= new Operacional();
+		this.algebric = new Algebric();
 
 		//Start Grid Panels
-		this.stocksGrid = new StocksGrid();
+		this.stocksGrid = new StocksGrid(this.operational.getStocks());
 		this.chartGrid = new ChartGrid();
 		this.analyticGrid = new AnalyticGrid();
 		this.tradeGrid = new TradeGrid();
-
 
 		//Start TimeLoop for Update
 		this.executor = Executors.newCachedThreadPool(new ThreadFactory() {
@@ -92,7 +86,7 @@ public class BullAnalytics extends Application {
             		}
         	});
 	
-        	executor.execute(new UpdateData());
+        	this.executor.execute(new UpdateData());
 	}
 
 	@Override
@@ -154,14 +148,34 @@ public class BullAnalytics extends Application {
 	private class UpdateData implements Runnable {
 		public void run() {
         		try {
+
 				//Update Assets
-				
-				//Update "Media Movel"
+				String newActiveStock = stocksGrid.getActiveStock();
+				if(!activeStock.equals(newActiveStock)){
+					activeStock = newActiveStock;
+					System.out.println("OK");
+					//Update "Media Movel"
 
-				//Update Chart
+					//Update Chart
+	/*				chartGrid.updateChart(
+							activeStock,
+							operational.pullInfo2(activeStock,"5"),
+							algebric.
+	*/			}
+
+				//Can Analyse new configurations
+				if(analyticGrid.getCanAnalyse()){
+					analyticGrid.setCanAnalyse(false);
+					System.out.println(analyticGrid.getActiveTimeSerie());
+					System.out.println(analyticGrid.getActiveIntervalIntraday());
+					System.out.println(analyticGrid.getActiveSmaMod());
+					System.out.println(analyticGrid.getActiveMinValue());
+					System.out.println(analyticGrid.getActivePivotValue());
+					System.out.println(analyticGrid.getActiveMaxValue());
+				}
 
 
-                		Thread.sleep(1000);
+                		Thread.sleep(50);
                 		executor.execute(this);
 			} catch (InterruptedException ex) {
                 		ex.printStackTrace();
