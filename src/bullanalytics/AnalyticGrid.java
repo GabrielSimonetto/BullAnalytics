@@ -7,13 +7,9 @@ import javafx.collections.ObservableList;
 //----Scene
 //--Control
 import javafx.scene.control.ComboBox;
-//import javafx.scene.text.Text;
-//import javafx.scene.text.TextAlignment;
-//import javafx.scene.control.Label;
+import javafx.scene.text.Text;
 import javafx.scene.control.TextField;
-//import javafx.scene.control.PasswordField;
 import javafx.scene.layout.GridPane;
-//import javafx.scene.layout.HBox;
 import javafx.scene.control.Button;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.RowConstraints;
@@ -26,22 +22,28 @@ import javafx.beans.value.ObservableValue;
 
 
 //Others
-//import javafx.geometry.Pos;
-//import javafx.geometry.Insets;
-//import java.net.URL;
+import javafx.scene.paint.Color;
 
 public class AnalyticGrid extends GridPane{
 	
 	//Variables
 	private String activeTimeSerie = "INTRADAY";
-	private String activeIntervalIntraday = "15";
+	private String activeIntervalIntraday = "15min";
 	private String activeSmaMod = "Simple";
 	private String activeMinValue = "0";
 	private String activePivotValue = "0";
 	private String activeMaxValue = "20";
 	private boolean canAnalyse = false;
 
+	private Text textTip = new Text("Insufficient data!");
+	private Text msgText = new Text();
+
 	public AnalyticGrid() {
+
+		//Start Aux
+		this.textTip.setFill(Color.WHITE);
+		this.msgText.setFill(Color.WHITE);
+
 		ObservableList<String> timeSeries = FXCollections.observableArrayList(
 				"INTRADAY", "DAILY", "WEEKLY", "MONTHLY");
 
@@ -55,6 +57,10 @@ public class AnalyticGrid extends GridPane{
 		ComboBox timeSeriesBox = new ComboBox(timeSeries);
 		ComboBox intervalIntradayBox = new ComboBox(intervalIntraday);
 		ComboBox smaModBox = new ComboBox(smaMod);
+
+		timeSeriesBox.prefWidthProperty().bind(this.widthProperty());
+		intervalIntradayBox.prefWidthProperty().bind(this.widthProperty());
+		smaModBox.prefWidthProperty().bind(this.widthProperty());
 
 		timeSeriesBox.getSelectionModel().select(0);
 		intervalIntradayBox.getSelectionModel().select(2);
@@ -123,6 +129,7 @@ public class AnalyticGrid extends GridPane{
 		//Button to Analyse
 		Button analyseBtn = new Button();
 		analyseBtn.setText("Analyse");
+		analyseBtn.prefWidthProperty().bind(this.widthProperty());
 	        analyseBtn.setOnAction(new EventHandler<ActionEvent>() {
         		@Override
            	 	public void handle(ActionEvent event) {
@@ -178,8 +185,30 @@ public class AnalyticGrid extends GridPane{
 		this.add(smaModBox,2,0);
 		this.add(maxValue,2,1);
 		this.add(analyseBtn,4,2);
+		this.add(this.msgText,4,0);
+		this.add(this.textTip,4,1);
 	}
 
+	public void updateTip(int result){
+		if(result == 2){
+			textTip.setText("Insufficient Data!");
+			textTip.setFill(Color.WHITE);
+			this.msgText.setText("");
+		}else if(result == 1){
+			textTip.setText("BUY!");
+			textTip.setFill(Color.GREEN);
+			this.msgText.setText("We recommend that you");
+		}else if(result == 0){
+			textTip.setText("KEEP!");
+			textTip.setFill(Color.WHITE);
+			this.msgText.setText("We recommend that you");
+		}else if(result == -1){
+			textTip.setText("SELL!");
+			textTip.setFill(Color.RED);
+			this.msgText.setText("We recommend that you");
+		}
+
+	}
 	//Getters and Setters
 	public void setCanAnalyse(boolean canAnalyse){
 		this.canAnalyse = canAnalyse;

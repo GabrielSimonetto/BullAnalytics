@@ -5,16 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 //Scene
-//import javafx.scene.control.Label;
-//import javafx.scene.text.Text;
-//import javafx.scene.text.TextAlignment;
-//import javafx.scene.control.TextField;
-//import javafx.scene.control.PasswordField;
 import javafx.scene.layout.GridPane;
-//import javafx.scene.layout.HBox;
 import javafx.scene.control.Button;
-//import javafx.scene.layout.ColumnConstraints;
-//import javafx.scene.layout.RowConstraints;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.chart.XYChart;
@@ -26,16 +18,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
 //Others
-//import javafx.geometry.Pos;
-//import javafx.geometry.Insets;
-//import java.net.URL;
-//import java.net.URLConnection;
-//import java.io.BufferedReader;
-//import java.io.InputStreamReader;
-//import java.lang.StringBuffer;
-//import java.io.IOException;
-//import java.net.MalformedURLException;
-
 public class ChartGrid extends GridPane{
 
 	//Variables
@@ -55,11 +37,13 @@ public class ChartGrid extends GridPane{
 		this.chart.setLegendVisible(false);
 
 		this.dataStock = new XYChart.Series();
+		this.dataStock.setName("Stock");
 		this.dataSMAMin = new XYChart.Series();
 		this.dataSMAMin.setName("SMA Min");
 		this.dataSMAPivot = new XYChart.Series();
 		this.dataSMAPivot.setName("SMA Pivot");
 		this.dataSMAMax = new XYChart.Series();
+		this.dataSMAMax.setName("SMA Max");
 
 		//Add in Chart
 		this.chart.getData().addAll(this.dataSMAMax, this.dataStock, this.dataSMAMin, this.dataSMAPivot);
@@ -72,22 +56,8 @@ public class ChartGrid extends GridPane{
 	public void updateChart(String newStock, ArrayList<ArrayList<String>> newDataStock, ArrayList<Double> newDataSMAMin,
 		      	ArrayList<Double> newDataSMAPivot, ArrayList<Double> newDataSMAMax, boolean isComplex){
 
-		//Remove if not Complex
-		//this.chart.getData().();
-	//	this.chart.getData().removeAll(this.dataSMAMin, this.dataSMAPivot);
-
-		if(isComplex){
-		//	this.chart.getData().addAll(this.dataSMAMax, this.dataStock, this.dataSMAMin, this.dataSMAPivot);
-			//this.dataSMAMax.setName("SMA Max");
-			System.out.println("Is Null");
-		}else{
-			//this.chart.getData().addAll(this.dataSMAMax, this.dataStock);
-			//this.dataSMAMax.setName("SMA");
-		}
-
 		//Set Stock Name
 		chart.setLegendVisible(true);
-		//this.dataStock.setName(newStock);
 
 		//Clear Chart
 		this.dataStock.getData().clear();
@@ -123,11 +93,17 @@ public class ChartGrid extends GridPane{
 		}
 	}
 
-	public void updateChart(ArrayList<ArrayList<String>> newDataStock, ArrayList<Double> newDataSMAMax){
+	public void updateChart(ArrayList<ArrayList<String>> newDataStock, ArrayList<Double> newDataSMAMin,
+		       	ArrayList<Double> newDataSMAPivot, ArrayList<Double> newDataSMAMax, boolean isComplex ){
 
 		//Clear Chart
 		this.dataStock.getData().remove(0);
 		this.dataSMAMax.getData().remove(0);
+
+		if(isComplex){
+			this.dataSMAMin.getData().remove(0);
+			this.dataSMAPivot.getData().remove(0);
+		}
 
 		int indexLabel = newDataStock.get(0).indexOf("timestamp");
 		int indexValue = newDataStock.get(0).indexOf("close");
@@ -137,5 +113,18 @@ public class ChartGrid extends GridPane{
 		double value = Double.parseDouble(newDataStock.get(1).get(indexValue));
 		this.dataStock.getData().add(new XYChart.Data(label,value));
 		this.dataSMAMax.getData().add(new XYChart.Data(label,newDataSMAMax.get(0)));//Don't have labels
+
+		if(isComplex){
+			this.dataSMAMin.getData().add(new XYChart.Data(label,newDataSMAMin.get(0)));//Don't have labels
+			this.dataSMAPivot.getData().add(new XYChart.Data(label,newDataSMAPivot.get(0)));//Don't have labels
+		}
+	}
+
+	public void clearChart(){
+		//Clear Chart
+		this.dataStock.getData().clear();
+		this.dataSMAMin.getData().clear();
+		this.dataSMAPivot.getData().clear();
+		this.dataSMAMax.getData().clear();
 	}
 }

@@ -22,6 +22,7 @@ public class Operacional {
 	private final String strPathUserStocks = "resources/csv/user_stocks.csv";
 	private final String strPathBaseStocks = "resources/csv/base_stocks.csv";
 	
+
 	//retorna uma mensagem para ser exibida para o usuario
 	public String addStock(String stockName, String stockSymbol) {
 		
@@ -52,9 +53,9 @@ public class Operacional {
 	
 	}
 	
-    public void removeStock(String stockName, String stockSymbol) {
+    public void removeStock(String stockSymbol) {
     
-    	String lineToRemove = (stockName + "," + stockSymbol);
+    	//String lineToRemove = (stockName + "," + stockSymbol);
     	
 		try {
 	
@@ -73,7 +74,7 @@ public class Operacional {
 	      //unless content matches data to be removed.
 	      while ((line = br.readLine()) != null) {
 	
-	        if (line.trim().equals(lineToRemove) == false) {
+	        if (line.trim().split(",")[1].equals(stockSymbol) == false) {
 	          pw.println(line);
 	          pw.flush();
 	        }

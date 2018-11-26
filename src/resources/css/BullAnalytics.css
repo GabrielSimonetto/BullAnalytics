@@ -11,18 +11,32 @@
 
 /*Text Fieds*/
 .text-field{
-	-fx-alignment:center;
 	-fx-text-fill: #D1B633;
 	-fx-background-color: #1A1A1A; 
 	-fx-border-width: 1;
 	-fx-border-style: solid;
 	-fx-border-color: #D1B633;
 	-fx-border-radius: 40;
+	-fx-margin: 20;
+}
+.combo-box-base{
+	 /*  -fx-skin: "com.sun.javafx.scene.control.skin.ComboBoxBaseSkin";*/
+    	-fx-background-color: #1f201f, #1f201f, #1f201f, #1f201f;
+    	-fx-text-fill:#D1B633;
+	-fx-focus-color: #1F201F;
+  /*  -fx-background-radius: 5, 5, 4, 3;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-padding: 0;*/
 }
 
-/* List Views */
-.combo-box-popup .list-view .list-cell {
-	-fx-border-color:#1f201f;
+/* List Views and List Cells*/
+.list-cell-base{
+    	-fx-background-color: #1f201f, #1f201f, #1f201f, #1f201f;
+	-fx-focus-color: #1F201F;
+}
+.list-view-base, .list-view{
+    	-fx-background-color: #1f201f, #1f201f, #1f201f, #1f201f;
+	-fx-focus-color: #1F201F;
 }
 .list-cell{
 	/*-fx-border-width: 1;
@@ -31,6 +45,7 @@
 	-fx-text-fill: #EEEEEE;
 	-fx-background-color: #1f201f;
 	-fx-focus-color: #1F201F;
+	-fx-background-radius: 40;
 }
 .list-cell:filled:selected:focused, .list-cell:filled:selected {
     	/*-fx-background-color: linear-gradient(#328BDB 0%, #207BCF 25%, #1973C9 75%, #0A65BF 100%);*/
@@ -65,13 +80,19 @@
 .chart-plot-background{
 	-fx-background-color:#1F201F;
 }
+.chart-legend {
+       	-fx-background-color: #1F201F; 
+	-fx-text-fill-color: #f4f4f4;
+}
+.chart-legend-item{
+	-fx-text-fill-color: #f4f4f4;
+}
 
 /* Grids Styles  */
 .grid{
-	-fx-border-width: 3;
+	-fx-border-width: 0;
 	-fx-border-color: #404040;
 	-fx-text-inner-color: #f4f4f4;
-	/*-fx-fill: FIREBRICK;*/
 }
 
 .stocksGrid{
@@ -83,10 +104,21 @@
 }
 
 .analyticGrid{
-	-fx-border-style: solid solid none solid;
+	-fx-border-style: solid;
+	-fx-border-width: 3;
+	-fx-border-color: #404040;
+	-fx-border-radius:20;
+	-fx-padding:5;
+	-fx-margin:10;
 }
 
-.tradeGrid{
+.configGrid{
 	-fx-border-style: solid solid solid solid;
+	-fx-border-style: solid;
+	-fx-border-width: 3;
+	-fx-border-color: #404040;
+	-fx-border-radius:20;
+	-fx-padding:5;
+	-fx-margin:15;
 }
 

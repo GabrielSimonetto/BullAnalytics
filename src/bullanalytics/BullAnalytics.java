@@ -10,23 +10,13 @@ import javafx.application.Preloader;
 
 //Scene
 import javafx.scene.Scene;
-//import javafx.scene.control.Label;
-//import javafx.scene.text.Text;
-//import javafx.scene.text.TextAlignment;
-//import javafx.scene.control.TextField;
-//import javafx.scene.control.PasswordField;
 import javafx.scene.layout.GridPane;
-//import javafx.scene.layout.HBox;
 import javafx.scene.control.Button;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.RowConstraints;
 
 //Stage
 import javafx.stage.Stage;
-
-//Events
-//import javax.event.ActionEvent;
-//import javax.event.EventHandler;
 
 //Timer
 import java.util.concurrent.ExecutorService;
@@ -53,7 +43,7 @@ public class BullAnalytics extends Application {
 	private StocksGrid stocksGrid;
 	private ChartGrid chartGrid;
 	private AnalyticGrid analyticGrid;
-	private TradeGrid tradeGrid;
+	private ConfigGrid configGrid;
 
 	//Data
 	private Operacional operational;
@@ -66,6 +56,7 @@ public class BullAnalytics extends Application {
 	private final String url = Main.class.getResource("/").toString();
 	private String auxTime;
 	private String activeStock = "";
+	private ArrayList<ArrayList<String>> stocksTable;
 	
 	@Override
 	public void init() throws Exception {
@@ -81,7 +72,7 @@ public class BullAnalytics extends Application {
 		this.stocksGrid = new StocksGrid(this.operational.getStocks());
 		this.chartGrid = new ChartGrid();
 		this.analyticGrid = new AnalyticGrid();
-		this.tradeGrid = new TradeGrid();
+		this.configGrid = new ConfigGrid(operational, this);
 
 		//Start TimeLoop for Update
 		this.executor = Executors.newCachedThreadPool(new ThreadFactory() {
@@ -129,7 +120,7 @@ public class BullAnalytics extends Application {
 		grid.setRowSpan(this.stocksGrid,3);
 		grid.add(this.chartGrid, 1, 0);
 		grid.add(this.analyticGrid, 1, 1);
-		grid.add(this.tradeGrid,1,2);
+		grid.add(this.configGrid,1,2);
 
         	//Make Scene
         	Scene scene = new Scene(grid, this.WIDTH, this.HEIGHT);
@@ -139,16 +130,24 @@ public class BullAnalytics extends Application {
 		this.stocksGrid.getStyleClass().addAll("grid", "stocksGrid");
 		this.chartGrid.getStyleClass().addAll("grid", "chartGrid");
 		this.analyticGrid.getStyleClass().addAll("grid", "analyticGrid");
-		this.tradeGrid.getStyleClass().addAll("grid", "tradeGrid");
+		this.configGrid.getStyleClass().addAll("grid", "configGrid");
 
         	//Stage
 		this.bullStage = primaryStage;
 		this.bullStage.setTitle("Bull Analytics");
 		this.bullStage.setScene(scene);
-		this.bullStage.sizeToScene();
-		//this.bullStage.setFullScreen(true);
+		//this.bullStage.sizeToScene();
+		this.bullStage.setFullScreen(true);
 		this.bullStage.setResizable(false);
 		this.bullStage.show();
+	}
+
+	public String getActiveStock(){
+		return this.activeStock;
+	}
+
+	public void updateStocks(){
+		this.stocksGrid.updateStocks(this.operational.getStocks());
 	}
 
 	//Make Updates in 500 miliseconds
@@ -159,9 +158,44 @@ public class BullAnalytics extends Application {
 				String newActiveStock = stocksGrid.getActiveStock();
 				if(!activeStock.equals(newActiveStock)){
 					activeStock = newActiveStock;
-					//System.out.println("OK");
-					ArrayList<ArrayList<String>> stocksTable = URLRequest.pullInfo2(analyticGrid.getActiveTimeSerie(),
-                                                         activeStock, analyticGrid.getActiveIntervalIntraday());
+
+					if(activeStock.equals("")){
+						chartGrid.clearChart();
+					}else{
+						
+						//System.out.println("OK");
+						stocksTable = URLRequest.pullInfo2(analyticGrid.getActiveTimeSerie(),
+                                                         	activeStock, analyticGrid.getActiveIntervalIntraday());
+						ArrayList<Double> closeTable = algebric.getClose(stocksTable);
+						ArrayList<Double> smaMaxTable = algebric.getMediaMovel(closeTable, 
+								analyticGrid.getActiveMaxValue());
+						
+						//Update SMA
+						if(analyticGrid.getActiveSmaMod().equals("Complex")){
+							ArrayList<Double> smaMinTable = algebric.getMediaMovel(closeTable, 
+									analyticGrid.getActiveMinValue());
+							ArrayList<Double> smaPivotTable = algebric.getMediaMovel(closeTable, 
+									analyticGrid.getActivePivotValue());
+							chartGrid.updateChart(activeStock, stocksTable, smaMinTable, smaPivotTable, smaMaxTable, true);
+	
+							//Veretido
+							ArrayList<ArrayList<Double>> auxVeredito = new ArrayList<ArrayList<Double>>();
+							auxVeredito.add(smaMinTable);
+							auxVeredito.add(smaPivotTable);
+							auxVeredito.add(smaMaxTable);
+							analyticGrid.updateTip(algebric.vereditoComplexa(auxVeredito));
+						}else{
+							chartGrid.updateChart(activeStock, stocksTable, null, null, smaMaxTable, false);
+	
+							//Veretido 
+							analyticGrid.updateTip(algebric.vereditoSimples(smaMaxTable, closeTable));
+						}
+					}
+				}	
+				String actualTime = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(new Date()).split(" ")[1].split(":")[1];
+				//Changed Analyse
+				if(analyticGrid.getCanAnalyse() && !activeStock.equals("")){
+					analyticGrid.setCanAnalyse(false);
 					ArrayList<Double> closeTable = algebric.getClose(stocksTable);
 					ArrayList<Double> smaMaxTable = algebric.getMediaMovel(closeTable, 
 								analyticGrid.getActiveMaxValue());
@@ -173,22 +207,20 @@ public class BullAnalytics extends Application {
 						ArrayList<Double> smaPivotTable = algebric.getMediaMovel(closeTable, 
 								analyticGrid.getActivePivotValue());
 						chartGrid.updateChart(activeStock, stocksTable, smaMinTable, smaPivotTable, smaMaxTable, true);
+
+						//Veretido
+						ArrayList<ArrayList<Double>> auxVeredito = new ArrayList<ArrayList<Double>>();
+						auxVeredito.add(smaMinTable);
+						auxVeredito.add(smaPivotTable);
+						auxVeredito.add(smaMaxTable);
+						analyticGrid.updateTip(algebric.vereditoComplexa(auxVeredito));
+			
 					}else{
 						chartGrid.updateChart(activeStock, stocksTable, null, null, smaMaxTable, false);
+
+						//Veretido 
+						analyticGrid.updateTip(algebric.vereditoSimples(smaMaxTable, closeTable));
 					}
-
-				}
-
-				String actualTime = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(new Date()).split(" ")[1].split(":")[1];
-				//Changed Analyse
-				if(analyticGrid.getCanAnalyse()){
-					analyticGrid.setCanAnalyse(false);
-					System.out.println(analyticGrid.getActiveTimeSerie());
-					System.out.println(analyticGrid.getActiveIntervalIntraday());
-					System.out.println(analyticGrid.getActiveSmaMod());
-					System.out.println(analyticGrid.getActiveMinValue());
-					System.out.println(analyticGrid.getActivePivotValue());
-					System.out.println(analyticGrid.getActiveMaxValue());
 
 					if(analyticGrid.getActiveIntervalIntraday().equals("1min")){
 						auxTime = actualTime;
@@ -196,29 +228,152 @@ public class BullAnalytics extends Application {
 				}
 
 				//Changed Time
-				if(analyticGrid.getActiveTimeSerie().equals("INTRADAY") && !actualTime.equals(auxTime) ){
+				if(analyticGrid.getActiveTimeSerie().equals("INTRADAY") && !actualTime.equals(auxTime) && !activeStock.equals("")){
 					if(analyticGrid.getActiveIntervalIntraday().equals("1min")){
-						//Update one line
-						System.out.println("1 min");
+						stocksTable = URLRequest.pullInfo2(analyticGrid.getActiveTimeSerie(),
+                                               			      activeStock, analyticGrid.getActiveIntervalIntraday());
+						ArrayList<Double> closeTable = algebric.getClose(stocksTable);
+						ArrayList<Double> smaMaxTable = algebric.getMediaMovel(closeTable, 
+								analyticGrid.getActiveMaxValue());
+						//Update SMA
+						if(analyticGrid.getActiveSmaMod().equals("Complex")){
+							ArrayList<Double> smaMinTable = algebric.getMediaMovel(closeTable, 
+									analyticGrid.getActiveMinValue());
+							ArrayList<Double> smaPivotTable = algebric.getMediaMovel(closeTable, 
+									analyticGrid.getActivePivotValue());
+							chartGrid.updateChart(stocksTable, smaMinTable, smaPivotTable, smaMaxTable, true);
+
+							//Veretido
+							ArrayList<ArrayList<Double>> auxVeredito = new ArrayList<ArrayList<Double>>();
+							auxVeredito.add(smaMinTable);
+							auxVeredito.add(smaPivotTable);
+							auxVeredito.add(smaMaxTable);
+							analyticGrid.updateTip(algebric.vereditoComplexa(auxVeredito));
+			
+						}else{
+							chartGrid.updateChart(stocksTable, null, null, smaMaxTable, false);
+
+							//Veretido 
+							analyticGrid.updateTip(algebric.vereditoSimples(smaMaxTable, closeTable));
+						}
 
 					}else if(analyticGrid.getActiveIntervalIntraday().equals("5min")){
 						if(actualTime.substring(1).equals("5")){//End 5
-							//Update one line
+							stocksTable = URLRequest.pullInfo2(analyticGrid.getActiveTimeSerie(),
+                                               				      activeStock, analyticGrid.getActiveIntervalIntraday());
+							ArrayList<Double> closeTable = algebric.getClose(stocksTable);
+							ArrayList<Double> smaMaxTable = algebric.getMediaMovel(closeTable, 
+									analyticGrid.getActiveMaxValue());
+							//Update SMA
+							if(analyticGrid.getActiveSmaMod().equals("Complex")){
+								ArrayList<Double> smaMinTable = algebric.getMediaMovel(closeTable, 
+										analyticGrid.getActiveMinValue());
+								ArrayList<Double> smaPivotTable = algebric.getMediaMovel(closeTable, 
+										analyticGrid.getActivePivotValue());
+								chartGrid.updateChart(stocksTable, smaMinTable, smaPivotTable, smaMaxTable, true);
 
+								//Veretido
+								ArrayList<ArrayList<Double>> auxVeredito = new ArrayList<ArrayList<Double>>();
+								auxVeredito.add(smaMinTable);
+								auxVeredito.add(smaPivotTable);
+								auxVeredito.add(smaMaxTable);
+								analyticGrid.updateTip(algebric.vereditoComplexa(auxVeredito));
+			
+							}else{
+								chartGrid.updateChart(stocksTable, null, null, smaMaxTable, false);
+
+								//Veretido 
+								analyticGrid.updateTip(algebric.vereditoSimples(smaMaxTable, closeTable));
+							}
 						}
 					}else if(analyticGrid.getActiveIntervalIntraday().equals("15min")){
 						if(actualTime.equals("15") || actualTime.equals("30") || 
 							actualTime.equals("45") || actualTime.equals("00")){
+							stocksTable = URLRequest.pullInfo2(analyticGrid.getActiveTimeSerie(),
+                                               				      activeStock, analyticGrid.getActiveIntervalIntraday());
 							//Update one line
+							ArrayList<Double> closeTable = algebric.getClose(stocksTable);
+							ArrayList<Double> smaMaxTable = algebric.getMediaMovel(closeTable, 
+									analyticGrid.getActiveMaxValue());
+							//Update SMA
+							if(analyticGrid.getActiveSmaMod().equals("Complex")){
+								ArrayList<Double> smaMinTable = algebric.getMediaMovel(closeTable, 
+										analyticGrid.getActiveMinValue());
+								ArrayList<Double> smaPivotTable = algebric.getMediaMovel(closeTable, 
+										analyticGrid.getActivePivotValue());
+								chartGrid.updateChart(stocksTable, smaMinTable, smaPivotTable, smaMaxTable, true);
 
+								//Veretido
+								ArrayList<ArrayList<Double>> auxVeredito = new ArrayList<ArrayList<Double>>();
+								auxVeredito.add(smaMinTable);
+								auxVeredito.add(smaPivotTable);
+								auxVeredito.add(smaMaxTable);
+								analyticGrid.updateTip(algebric.vereditoComplexa(auxVeredito));
+			
+							}else{
+								chartGrid.updateChart(stocksTable, null, null, smaMaxTable, false);
+
+								//Veretido 
+								analyticGrid.updateTip(algebric.vereditoSimples(smaMaxTable, closeTable));
+							}
 						}
 					}else if(analyticGrid.getActiveIntervalIntraday().equals("30min")){
 						if(actualTime.equals("30") || actualTime.equals(00)){
-							//Update one line
+							stocksTable = URLRequest.pullInfo2(analyticGrid.getActiveTimeSerie(),
+                                               				      activeStock, analyticGrid.getActiveIntervalIntraday());
+							ArrayList<Double> closeTable = algebric.getClose(stocksTable);
+							ArrayList<Double> smaMaxTable = algebric.getMediaMovel(closeTable, 
+									analyticGrid.getActiveMaxValue());
+							//Update SMA
+							if(analyticGrid.getActiveSmaMod().equals("Complex")){
+								ArrayList<Double> smaMinTable = algebric.getMediaMovel(closeTable, 
+										analyticGrid.getActiveMinValue());
+								ArrayList<Double> smaPivotTable = algebric.getMediaMovel(closeTable, 
+										analyticGrid.getActivePivotValue());
+								chartGrid.updateChart(stocksTable, smaMinTable, smaPivotTable, smaMaxTable, true);
+
+								//Veretido
+								ArrayList<ArrayList<Double>> auxVeredito = new ArrayList<ArrayList<Double>>();
+								auxVeredito.add(smaMinTable);
+								auxVeredito.add(smaPivotTable);
+								auxVeredito.add(smaMaxTable);
+								analyticGrid.updateTip(algebric.vereditoComplexa(auxVeredito));
+			
+							}else{
+								chartGrid.updateChart(stocksTable, null, null, smaMaxTable, false);
+
+								//Veretido 
+								analyticGrid.updateTip(algebric.vereditoSimples(smaMaxTable, closeTable));
+							}						
 						}
 					}else if(analyticGrid.getActiveIntervalIntraday().equals("60min")){
 						if(actualTime.equals("00")){
-							//Update one line
+							stocksTable = URLRequest.pullInfo2(analyticGrid.getActiveTimeSerie(),
+                                               				      activeStock, analyticGrid.getActiveIntervalIntraday());
+							ArrayList<Double> closeTable = algebric.getClose(stocksTable);
+							ArrayList<Double> smaMaxTable = algebric.getMediaMovel(closeTable, 
+									analyticGrid.getActiveMaxValue());
+							//Update SMA
+							if(analyticGrid.getActiveSmaMod().equals("Complex")){
+								ArrayList<Double> smaMinTable = algebric.getMediaMovel(closeTable, 
+										analyticGrid.getActiveMinValue());
+								ArrayList<Double> smaPivotTable = algebric.getMediaMovel(closeTable, 
+										analyticGrid.getActivePivotValue());
+								chartGrid.updateChart(stocksTable, smaMinTable, smaPivotTable, smaMaxTable, true);
+
+								//Veretido
+								ArrayList<ArrayList<Double>> auxVeredito = new ArrayList<ArrayList<Double>>();
+								auxVeredito.add(smaMinTable);
+								auxVeredito.add(smaPivotTable);
+								auxVeredito.add(smaMaxTable);
+								analyticGrid.updateTip(algebric.vereditoComplexa(auxVeredito));
+			
+							}else{
+								chartGrid.updateChart(stocksTable, null, null, smaMaxTable, false);
+
+								//Veretido 
+								analyticGrid.updateTip(algebric.vereditoSimples(smaMaxTable, closeTable));
+							}					
 						}
 					}
 				}
