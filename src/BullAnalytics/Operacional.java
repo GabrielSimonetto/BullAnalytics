@@ -22,29 +22,8 @@ public class Operacional {
 	static String strPathUserStocks = "res/user_stocks.csv";
 	static String strPathBaseStocks = "res/base_stocks.csv";
 	
-	
-	
-	public static String addStockDoRobson(String stockName, String stockSymbol) {
-		
-		try {
-			
-			//Escreve nova linha em csv.
-			final Writer output;
-			//append == true
-			output = new BufferedWriter(new FileWriter(strPathUserStocks, true));
-			output.append(stockName + "," + stockSymbol);
-			output.close();
-			return (stockName + " foi criada com sucesso!");	
-		}
-		
-		catch(IOException e){
-			return ("IOException detectada");
-		}
-	
-	}
-	
 	//retorna uma mensagem para ser exibida para o usuario
-	public static String addStock(String stockName, String stockSymbol) {
+	public String addStock(String stockName, String stockSymbol) {
 		
 		if(URLRequest.testAPI() == false) {
 			return ("A conexão com o API está falhando");
@@ -73,15 +52,13 @@ public class Operacional {
 	
 	}
 	
-    public static void removeStock(String stockName, String stockSymbol) {
-    
-    	String lineToRemove = (stockName + "," + stockSymbol);
+	public void removeStock(String stockSymbol) {
     	
 		try {
 	
 	      File inFile = new File(strPathUserStocks);
 	      
-	      //File temporário que no fim da operação vira o oficial
+	      //File temporario que no fim da operacao vira o oficial
 	      System.out.println(inFile.getAbsolutePath());
 	      File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
 	
@@ -94,7 +71,7 @@ public class Operacional {
 	      //unless content matches data to be removed.
 	      while ((line = br.readLine()) != null) {
 	
-	        if (line.trim().equals(lineToRemove) == false) {
+	        if (line.trim().split(",")[1].equals(stockSymbol) == false) {
 	          pw.println(line);
 	          pw.flush();
 	        }
@@ -120,9 +97,9 @@ public class Operacional {
 	    catch (IOException ex) {
 	      ex.printStackTrace();
 	    }
-    }
+	}
 	
-	private static void initializeUserStocks() {
+	public void initializeUserStocks() {
 
 		Path src = Paths.get(strPathBaseStocks);
 		Path dst = Paths.get(strPathUserStocks);
@@ -135,12 +112,8 @@ public class Operacional {
 		
 	}
 	
-	private static ArrayList<ArrayList<String>> getStocks(){
+	public ArrayList<ArrayList<String>> getStocks(){
 
-//		ClassLoader classLoader = getClass().getClassLoader();
-//		File file = new File(classLoader.getResource(fileName).getFile());
-		//String url = Operacional.class.getResource("/").toString();
-		//System.out.println(".."+url+"res/stocks.csv");
 		File file = new File("res/user_stocks.csv");
 		
 		try(Scanner fileReader = new Scanner(file)){
@@ -183,15 +156,6 @@ public class Operacional {
 				dataReturn.add(auxArray);
 			}
 
-			//Print Test
-			/*int i=1;
-			for(ArrayList a : dataReturn){
-				System.out.println("\n================"+i+"================");
-				for(Object t : a){
-					System.out.print(t+",");
-				}
-				i++;
-			}*/
 			return dataReturn;
 			
 		}catch(FileNotFoundException fileNotFoundException){

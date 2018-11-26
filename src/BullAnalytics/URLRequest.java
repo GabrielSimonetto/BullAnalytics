@@ -11,6 +11,8 @@ import java.util.LinkedList;
 
 public class URLRequest {
 	
+	static String APIKEY = "HNC81M7JBQA03BPZ";
+	
 	//testa se a conexao com o API ta funcionando
 	public static boolean testAPI() {
 		
@@ -19,7 +21,7 @@ public class URLRequest {
 				+ "&symbol=MSFT"
 				+ "&interval=5min" 
 				// minha API key pra pedir intervalo de 1 minuto
-				+ "&apikey=HNC81M7JBQA03BPZ"
+				+ "&apikey=" + APIKEY
 				+ "&datatype=csv";
 		
 		URL obj;
@@ -42,14 +44,14 @@ public class URLRequest {
 		return true;
 	}
 	
-public static String returnFirstLine(String symbol, String interval) {
-		
+	public static String returnFirstLine(String symbol, String interval) {
+	
 		String url = "https://www.alphavantage.co/query?"
 				+ "function=TIME_SERIES_INTRADAY"
 				+ "&symbol=" + symbol
 				+ "&interval=" + interval
 				// minha API key pra pedir intervalo de 1 minuto
-				+ "&apikey=HNC81M7JBQA03BPZ"
+				+ "&apikey=" + APIKEY
 				+ "&datatype=csv";
 		
 		URL obj;
@@ -79,15 +81,28 @@ public static String returnFirstLine(String symbol, String interval) {
 		}
 	}
 	
-	public static ArrayList<ArrayList<String>> pullInfo2(String symbol, String interval) {
+	public static ArrayList<ArrayList<String>> pullInfo2(String function, String symbol, String interval) {
+
+		String url;
 		
-		String url = "https://www.alphavantage.co/query?"
-				+ "function=TIME_SERIES_INTRADAY"
-				+ "&symbol=" + symbol
-				+ "&interval=" + interval
-				// minha API key pra pedir intervalo de 1 minuto
-				+ "&apikey=HNC81M7JBQA03BPZ"
-				+ "&datatype=csv";
+		if(interval.equals("")) {
+			url = "https://www.alphavantage.co/query?"
+					+ "function=" + function
+					+ "&symbol=" + symbol
+					// minha API key pra pedir intervalo de 1 minuto
+					+ "&apikey=" + APIKEY
+					+ "&datatype=csv";
+		}
+		else {
+			url = "https://www.alphavantage.co/query?"
+					+ "function=TIME_SERIES_INTRADAY"
+					+ "&symbol=" + symbol
+					+ "&interval=" + interval
+					// minha API key pra pedir intervalo de 1 minuto
+					+ "&apikey=" + APIKEY
+					+ "&datatype=csv";
+		}
+		
 		
 		URL obj;
 		try {
@@ -139,10 +154,5 @@ public static String returnFirstLine(String symbol, String interval) {
 			e.printStackTrace();
 			return null;
 		}
-	}
-	
-	public static void main(String[] args) {
-		
-		System.out.println(testAPI());;
 	}
 }

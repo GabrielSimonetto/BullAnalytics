@@ -7,9 +7,39 @@ import java.util.Stack;
 
 public class Algebric {
 	
+	// -1 = vende, 0 = hold, 1 = compra , 2 = dados insuficientes
+		public int vereditoSimples(ArrayList<Double> mediaMovelArray, ArrayList<Double> closeArray) {
+			
+			//mrv = mostRecentValue
+			Double mrvMM = mediaMovelArray.get(0);
+			Double mrvClose = closeArray.get(0);
+			
+			//penultimos valores
+			Double pMM = mediaMovelArray.get(1);
+			Double pClose = closeArray.get(1);
+			
+			boolean pMMMaiorQueClose = pMM > pClose;
+			boolean mrvMMMaiorQueClose = mrvMM > mrvClose;
+			
+			if(!mmIsValid(mrvMM)) {
+				return 2;
+			}
+			
+			//teste para se houve intersecao
+			if(pMMMaiorQueClose != mrvMMMaiorQueClose) {
+				if(mrvMMMaiorQueClose) {
+					return -1;
+				}
+				else {
+					return 1;
+				}
+			}
+			return 0;
+	}
+	
 	//a analise complexa é inspirada no método "Didi index"
 	// -1 = vende, 0 = hold, 1 = compra, 2 = dados insuficientes;
-	public static int vereditoComplexa(ArrayList<ArrayList<Double>> arraysComplexa) {
+	public int vereditoComplexa(ArrayList<ArrayList<Double>> arraysComplexa) {
 		
 		ArrayList<Double> arrayCurto = arraysComplexa.get(0);
 		ArrayList<Double> arrayPivo = arraysComplexa.get(1);
@@ -33,32 +63,7 @@ public class Algebric {
 		return 0;
 	}
 	
-	
-	//retorna os valores para plotar o grafico com 3 linhas de curto prazo, pivo, longo prazo.
-	// get(0) = curto ;; get(1) == pivo ;; get(2) == longo
-	public static ArrayList<ArrayList<Double>> getComplexa(ArrayList<Double> closeArray,
-																int intervaloCurto,
-																int intervaloPivo,
-																int intervaloLongo){
-	
-		ArrayList<ArrayList<Double>> output = new ArrayList<ArrayList<Double>>();
-		
-		output.add(getMediaMovel(closeArray, intervaloCurto));
-		output.add(getMediaMovel(closeArray, intervaloPivo));
-		output.add(getMediaMovel(closeArray, intervaloLongo));
-		
-		return output;
-	}
-	
-	// preferi deixar  as listas como parametro pq salva processamento no meio do main
-//	private static boolean vereditoVender(ArrayList<Double> closeList, ArrayList<Double> mmList) {
-//		double lastClose = closeList.get(closeList.size() - 1);
-//		double lastMM = mmList.get(0);
-//		
-//		
-//	}
-	
-	public static ArrayList<Double> getClose(ArrayList<ArrayList<String>> tabela){
+	public ArrayList<Double> getClose(ArrayList<ArrayList<String>> tabela){
 		
 		int indexClose = tabela.get(0).indexOf("close");
 		ArrayList<Double> closeArray = new ArrayList<Double>(); 
@@ -76,7 +81,7 @@ public class Algebric {
 		return closeArray;
 	}
 	
-	public static ArrayList<Double> getMediaMovel(ArrayList<Double> closeArray, int intervalos){
+	public ArrayList<Double> getMediaMovel(ArrayList<Double> closeArray, int intervalos){
 		
 		//ENFIA UM STACK AQUI PRA INVERTER A ORDEM!!!
 		
@@ -114,15 +119,9 @@ public class Algebric {
 	}
 	
 	//media movel só pode ser usada se o valor mais recente for diferente de zero
-	public static boolean mmIsValid(Double lastValueMMArray){
+	public boolean mmIsValid(Double lastValueMMArray){
 		// se essa condição for verdadeira, na verdade, mm não é valida.
 		return !(lastValueMMArray == 0.0);
 	}
 	
-	public static void main(String[] args) {
-//		ArrayList<Double> MMArray = new ArrayList<Double>();
-//		
-//		MMArray.add(0.0);
-//		System.out.println(mmIsValid(MMArray));
-	}
 }
